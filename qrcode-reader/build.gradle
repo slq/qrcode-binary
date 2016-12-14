@@ -1,7 +1,6 @@
 group 'com.slq.qrcode'
 version '1.0-SNAPSHOT'
 
-apply plugin: 'groovy'
 apply plugin: 'java'
 apply plugin: 'idea'
 
@@ -21,7 +20,4 @@ idea {
 dependencies {
     // https://mvnrepository.com/artifact/com.google.zxing/core
     compile group: 'com.google.zxing', name: 'core', version: '3.3.0'
-
-    // https://mvnrepository.com/artifact/org.codehaus.groovy/groovy-all
-    compile group: 'org.codehaus.groovy', name: 'groovy-all', version: '2.4.7'
 }
