@@ -11,8 +11,6 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
@@ -75,16 +73,11 @@ public class QRCodeGenerator {
 
             PipedInputStream inS = new PipedInputStream();
             PipedOutputStream out = new PipedOutputStream(inS);
-            new Thread(
-                    new Runnable() {
-                        public void run() {
-                            QRCode.from(messageToEncode).to(ImageType.PNG)
-                                    .withSize(400, 400)
-                                    .withCharset("UTF-8")
-                                    .withErrorCorrection(ErrorCorrectionLevel.L)
-                                    .writeTo(out);
-                        }
-                    }
+            new Thread(() -> QRCode.from(messageToEncode).to(ImageType.PNG)
+                            .withSize(400, 400)
+                            .withCharset("UTF-8")
+                            .withErrorCorrection(ErrorCorrectionLevel.L)
+                            .writeTo(out)
             ).start();
 
             picLabel.setIcon(new ImageIcon(ImageIO.read(inS)));
