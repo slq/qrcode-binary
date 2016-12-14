@@ -1,0 +1,3 @@
+rootProject.name = 'qrcode-binary'
+include "qrcode-generator", "qrcode-reader"
+
