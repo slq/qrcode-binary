@@ -7,26 +7,31 @@ import java.awt.*;
 import java.io.IOException;
 import java.io.PipedInputStream;
 
+import static java.awt.Color.BLACK;
+
 public class QRCodeImageViewer extends JFrame {
 
-    private JLabel picLabel = new JLabel();
+	public static final int MARGIN_SIZE = 20;
+	public static final int FRAME_SIZE = 500;
+	private JLabel picLabel;
 
-    public QRCodeImageViewer() throws HeadlessException {
-        setTitle("QRCode");
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
+	public QRCodeImageViewer() throws HeadlessException {
+		picLabel = new JLabel();
 
-        JPanel panel = new JPanel();
-        panel.setBackground(Color.BLACK);
-        panel.setBorder(new EmptyBorder(20, 20, 20, 20));
-        picLabel = new JLabel();
-        panel.add(picLabel);
-        setSize(500, 500);
-        setContentPane(panel);
-        setVisible(true);
-    }
+		JPanel panel = new JPanel();
+		panel.setBackground(BLACK);
+		panel.setBorder(new EmptyBorder(MARGIN_SIZE, MARGIN_SIZE, MARGIN_SIZE, MARGIN_SIZE));
+		panel.add(picLabel);
 
-    public void readImageFrom(PipedInputStream imageInputStream) throws IOException {
-        picLabel.setIcon(new ImageIcon(ImageIO.read(imageInputStream)));
-        repaint();
-    }
+		setTitle("QRCode Image Viewer");
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		setSize(FRAME_SIZE, FRAME_SIZE);
+		setContentPane(panel);
+		setVisible(true);
+	}
+
+	public void readImageFrom(PipedInputStream imageInputStream) throws IOException {
+		picLabel.setIcon(new ImageIcon(ImageIO.read(imageInputStream)));
+		repaint();
+	}
 }
