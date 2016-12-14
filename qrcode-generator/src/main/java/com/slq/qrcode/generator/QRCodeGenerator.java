@@ -7,10 +7,6 @@ import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.imageio.ImageIO;
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import java.awt.*;
 import java.io.IOException;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
@@ -18,8 +14,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Base64;
 import java.util.concurrent.TimeUnit;
-
-import static javax.swing.JFrame.EXIT_ON_CLOSE;
 
 public class QRCodeGenerator {
 
@@ -29,22 +23,10 @@ public class QRCodeGenerator {
 
     static final int MAX_LENGTH = 2500;
     static final int SLEEP_TIME = 3;
-    static private JLabel picLabel = new JLabel();
-    static private JFrame frame = new JFrame();
+    private QRCodeImageViewer frame = new QRCodeImageViewer();
 
     public static void main(String[] args) throws IOException, InterruptedException {
         String INPUT_FILE_PATH = "~/ABC.pdf";
-
-        frame = new JFrame("QRCode");
-        frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
-        JPanel panel = new JPanel();
-        panel.setBackground(Color.BLACK);
-        panel.setBorder(new EmptyBorder(20, 20, 20, 20));
-        picLabel = new JLabel();
-        panel.add(picLabel);
-        frame.setSize(500, 500);
-        frame.setContentPane(panel);
-        frame.setVisible(true);
 
         new QRCodeGenerator().encode(INPUT_FILE_PATH);
     }
@@ -71,18 +53,17 @@ public class QRCodeGenerator {
             String messageToEncode = String.format("%d|%d|%s|%s", i, max, outputFilename, content.substring(start, end));
             log.info("{}/{} - {}", i, max, messageToEncode);
 
-            PipedInputStream inS = new PipedInputStream();
-            PipedOutputStream out = new PipedOutputStream(inS);
-            new Thread(() -> QRCode.from(messageToEncode).to(ImageType.PNG)
+            PipedInputStream imageInputStream = new PipedInputStream();
+            PipedOutputStream imageOutputStream = new PipedOutputStream(imageInputStream);
+            new Thread(() -> QRCode.from(messageToEncode)
+                            .to(ImageType.PNG)
                             .withSize(400, 400)
                             .withCharset("UTF-8")
                             .withErrorCorrection(ErrorCorrectionLevel.L)
-                            .writeTo(out)
+                            .writeTo(imageOutputStream)
             ).start();
 
-            picLabel.setIcon(new ImageIcon(ImageIO.read(inS)));
-
-            frame.repaint();
+            frame.readImageFrom(imageInputStream);
 
             TimeUnit.SECONDS.sleep(SLEEP_TIME);
 
