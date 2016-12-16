@@ -21,14 +21,18 @@ public class QRCodeGenerator {
 
     private static Logger log = LoggerFactory.getLogger(QRCodeGenerator.class);
 
-    static final int MAX_LENGTH = 2500;
-    static final int SLEEP_TIME = 3;
-    private QRCodeImageViewer frame = new QRCodeImageViewer();
+    static final int MAX_LENGTH = 2800;
+    static final int SLEEP_TIME = 5;
+    private static QRCodeImageViewer frame = new QRCodeImageViewer();
 
     public static void main(String[] args) throws IOException, InterruptedException {
-        String INPUT_FILE_PATH = "~/ABC.pdf";
-
-        new QRCodeGenerator().encode(INPUT_FILE_PATH);
+        try {
+            log.info("Generating QRCodes for: {}", args[0]);
+            new QRCodeGenerator().encode(args[0]);
+        } catch (Exception e) {
+            e.printStackTrace();
+            frame.close();
+        }
     }
 
     private void encode(String inputFile) throws IOException, InterruptedException {
@@ -56,11 +60,11 @@ public class QRCodeGenerator {
             PipedInputStream imageInputStream = new PipedInputStream();
             PipedOutputStream imageOutputStream = new PipedOutputStream(imageInputStream);
             new Thread(() -> QRCode.from(messageToEncode)
-                            .to(ImageType.PNG)
-                            .withSize(400, 400)
-                            .withCharset("UTF-8")
-                            .withErrorCorrection(ErrorCorrectionLevel.L)
-                            .writeTo(imageOutputStream)
+                    .to(ImageType.PNG)
+                    .withSize(400, 400)
+                    .withCharset("UTF-8")
+                    .withErrorCorrection(ErrorCorrectionLevel.L)
+                    .writeTo(imageOutputStream)
             ).start();
 
             frame.readImageFrom(imageInputStream);
@@ -87,7 +91,7 @@ public class QRCodeGenerator {
             }
         }
 
-        boolean isBinary = nonalphanumeric > alphanumeric;
+        boolean isBinary = (2 * nonalphanumeric) > alphanumeric;
         if (isBinary) {
             log.info("Binary file detected {}", inputFilePath);
         } else {

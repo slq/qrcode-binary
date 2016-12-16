@@ -3,35 +3,37 @@ version '1.0-SNAPSHOT'
 
 apply plugin: 'java'
 apply plugin: 'idea'
-apply plugin: 'application'
 
 repositories {
     mavenCentral()
     maven { url 'https://jitpack.io' }
 }
 
-mainClassName = "com.slq.qrcode.reader.WhiteboxLocation"
-
-task readerScript(type: CreateStartScripts) {
-    outputDir = new File(project.buildDir, 'scripts')
-    mainClassName = 'com.slq.qrcode.reader.QRCodeReader'
-    applicationName = "reader"
-    classpath = jar.outputs.files + project.configurations.runtime
+task runApp(type: JavaExec) {
+    main = 'com.slq.qrcode.reader.WhiteboxLocation'
+    classpath = sourceSets.main.runtimeClasspath
 }
 
-task generatorScript(type: CreateStartScripts) {
-    mainClassName = 'com.slq.qrcode.generator.QRCodeGenerator'
-    applicationName = "generator"
-    outputDir = new File(project.buildDir, 'scripts')
-    classpath = jar.outputs.files + project.configurations.runtime
+task runReader(type: JavaExec) {
+    main = 'com.slq.qrcode.reader.QRCodeReader'
+    classpath = sourceSets.main.runtimeClasspath
 }
 
-readerScript.finalizedBy(installDist, generatorScript)
+task runGenerator(type: JavaExec) {
+    main = 'com.slq.qrcode.generator.QRCodeGenerator'
+    classpath = sourceSets.main.runtimeClasspath
+//    args(inputFile)
+}
 
-idea {
-    module {
-        downloadJavadoc = true
-        downloadSources = true
+allprojects {
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
+    idea {
+        module {
+            downloadJavadoc = true
+            downloadSources = true
+        }
     }
 }
 

@@ -33,7 +33,7 @@ public final class QRCodeReader {
         Map<String, String> map = new TreeMap<>(Comparator.comparingInt((ToIntFunction<String>) Integer::parseInt));
 
         boolean isDone = false;
-        for (int i = 0; i < 10000 && !isDone; i++) {
+        while(!isDone){
             isDone = decodeScreen(map);
             TimeUnit.SECONDS.sleep(SLEEP_TIME);
         }
