@@ -15,13 +15,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Base64;
-import java.util.Comparator;
-import java.util.EnumMap;
-import java.util.EnumSet;
-import java.util.Map;
-import java.util.Objects;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.ToIntFunction;
 
@@ -30,16 +24,18 @@ public final class QRCodeReader {
     public static final int SLEEP_TIME = 1;
 
     public static void main(String[] args) throws IOException, AWTException, InterruptedException {
-        Map<String, String> map = new TreeMap<>(Comparator.comparingInt((ToIntFunction<String>) Integer::parseInt));
+        Item item = new Item();
 
         boolean isDone = false;
-        while(!isDone){
-            isDone = decodeScreen(map);
+        while (!isDone) {
+            isDone = decodeScreen(item);
             TimeUnit.SECONDS.sleep(SLEEP_TIME);
         }
+
+        item.persist();
     }
 
-    private static boolean decodeScreen(Map<String, String> map) throws AWTException, IOException, InterruptedException {
+    private static boolean decodeScreen(Item item) throws AWTException, IOException, InterruptedException {
         QRCodeReader runner = new QRCodeReader();
 
         Point startingPoint = new WhiteboxLocation().locateWhitebox();
@@ -54,29 +50,18 @@ public final class QRCodeReader {
         String text = runner.getDecodeText(image);
 
         String pointMsg = String.format("x=%.0f, y=%.0f", startingPoint.getX(), startingPoint.getY());
-        System.out.printf("%s|%s%n", pointMsg, text);
+
+        if (text.length() > 150) {
+            System.out.printf("%s|%s ... %s%n", pointMsg, text.substring(0, 100), text.substring(text.length() - 40));
+        } else {
+            System.out.printf("%s| short! %s%n", pointMsg, text);
+        }
 
         if (Objects.equals(text, "")) {
             return false;
         }
 
-        String key = text.split("\\|")[0];
-        String max = text.split("\\|")[1];
-        String outputFilename = text.split("\\|")[2];
-        String value = text.split("\\|")[3];
-
-        if (!map.containsKey(key)) {
-            map.put(key, value);
-        }
-
-        new File(outputFilename).delete();
-        for (Map.Entry<String, String> entry : map.entrySet()) {
-            try (FileOutputStream output = new FileOutputStream(outputFilename, true)) {
-                output.write(Base64.getDecoder().decode(entry.getValue()));
-            }
-        }
-
-        return key.equals(max);
+        return item.updateIfNeeded(text);
     }
 
     private String getDecodeText(BufferedImage image) {
@@ -95,6 +80,50 @@ public final class QRCodeReader {
             return "";
         }
         return String.valueOf(result.getText());
+    }
+
+    private static class Item {
+        Map<String, String> map = new TreeMap<>(Comparator.comparingInt((ToIntFunction<String>) Integer::parseInt));
+        private String outputFilename = "";
+
+
+        public void updateOutputFilenameIfNeeded(String outputFilename) {
+            if (outputFilename.length() > this.outputFilename.length()) {
+                this.outputFilename = outputFilename;
+            }
+        }
+
+        public void updateMapIfNeeded(String key, String value) {
+            if (!map.containsKey(key)) {
+                map.put(key, value);
+            } else {
+                String currentValue = map.get(key);
+                if (value.length() > currentValue.length()) {
+                    map.put(key, value);
+                }
+            }
+        }
+
+        public boolean updateIfNeeded(String text) {
+            String key = text.split("\\|")[0];
+            String max = text.split("\\|")[1];
+            String outputFilename = text.split("\\|")[2];
+            String value = text.split("\\|")[3];
+
+            updateMapIfNeeded(key, value);
+            updateOutputFilenameIfNeeded(outputFilename);
+
+            return key.equals(max);
+        }
+
+        public void persist() throws IOException {
+            new File(outputFilename).delete();
+            for (String value : map.values()) {
+                try (FileOutputStream output = new FileOutputStream(outputFilename, true)) {
+                    output.write(Base64.getDecoder().decode(value));
+                }
+            }
+        }
     }
 
 }
