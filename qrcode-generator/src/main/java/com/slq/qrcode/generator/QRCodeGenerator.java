@@ -21,8 +21,8 @@ public class QRCodeGenerator {
 
     private static Logger log = LoggerFactory.getLogger(QRCodeGenerator.class);
 
-    static final int MAX_LENGTH = 2800;
-    static final int SLEEP_TIME = 5;
+    private static final int MAX_LENGTH = 2800;
+    private static final int SLEEP_TIME = 5;
     private static QRCodeImageViewer frame = new QRCodeImageViewer();
 
     public static void main(String[] args) throws IOException, InterruptedException {
@@ -55,7 +55,7 @@ public class QRCodeGenerator {
 
         while (start < end && end <= length) {
             String messageToEncode = String.format("%d|%d|%s|%s", i, max, outputFilename, content.substring(start, end));
-            log.info("{}/{} - {}", i, max, messageToEncode);
+            log.info("{}/{} - {}...{}", i, max, messageToEncode.substring(0, 100), messageToEncode.substring(messageToEncode.length()-40));
 
             PipedInputStream imageInputStream = new PipedInputStream();
             PipedOutputStream imageOutputStream = new PipedOutputStream(imageInputStream);

@@ -15,9 +15,14 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.*;
+import java.util.Base64;
+import java.util.EnumMap;
+import java.util.EnumSet;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
-import java.util.function.ToIntFunction;
 
 public final class QRCodeReader {
 
@@ -83,18 +88,24 @@ public final class QRCodeReader {
     }
 
     private static class Item {
-        Map<String, String> map = new TreeMap<>(Comparator.comparingInt((ToIntFunction<String>) Integer::parseInt));
+        static final String MESSAGE_DELIMITER = "\\|";
+
+        Map<Integer, String> map = new TreeMap<>();
         private String outputFilename = "";
 
 
-        public void updateOutputFilenameIfNeeded(String outputFilename) {
+        void updateOutputFilenameIfNeeded(String outputFilename) {
             if (outputFilename.length() > this.outputFilename.length()) {
                 this.outputFilename = outputFilename;
             }
         }
 
-        public void updateMapIfNeeded(String key, String value) {
+        void updateMapIfNeeded(Integer key, String value) {
             if (!map.containsKey(key)) {
+                if(key - previousKey(map) != 1) {
+                    throw new IllegalStateException("Missing part before #" + key);
+                }
+
                 map.put(key, value);
             } else {
                 String currentValue = map.get(key);
@@ -104,11 +115,24 @@ public final class QRCodeReader {
             }
         }
 
-        public boolean updateIfNeeded(String text) {
-            String key = text.split("\\|")[0];
-            String max = text.split("\\|")[1];
-            String outputFilename = text.split("\\|")[2];
-            String value = text.split("\\|")[3];
+        private Integer previousKey(Map<Integer, String> map) {
+            Optional<Map.Entry<Integer, String>> previousEntry = map
+                    .entrySet()
+                    .stream()
+                    .max(Map.Entry.comparingByKey());
+
+            if (previousEntry.isPresent()) {
+                return previousEntry.get().getKey();
+            }
+
+            return 0;
+        }
+
+        boolean updateIfNeeded(String text) {
+            Integer key = Integer.parseInt(text.split(MESSAGE_DELIMITER)[0]);
+            Integer max = Integer.parseInt(text.split(MESSAGE_DELIMITER)[1]);
+            String outputFilename = text.split(MESSAGE_DELIMITER)[2];
+            String value = text.split(MESSAGE_DELIMITER)[3];
 
             updateMapIfNeeded(key, value);
             updateOutputFilenameIfNeeded(outputFilename);
@@ -116,7 +140,7 @@ public final class QRCodeReader {
             return key.equals(max);
         }
 
-        public void persist() throws IOException {
+        void persist() throws IOException {
             new File(outputFilename).delete();
             for (String value : map.values()) {
                 try (FileOutputStream output = new FileOutputStream(outputFilename, true)) {
