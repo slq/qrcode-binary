@@ -1,12 +1,30 @@
 group 'com.slq.qrcode'
 version '1.0-SNAPSHOT'
 
-apply plugin: 'java'
-apply plugin: 'idea'
+allprojects {
+    group 'com.slq.qrcode'
 
-repositories {
-    mavenCentral()
-    maven { url 'https://jitpack.io' }
+    apply plugin: 'java'
+    apply plugin: 'idea'
+
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
+    idea {
+        module {
+            downloadJavadoc = true
+            downloadSources = true
+        }
+    }
+
+    repositories {
+        maven { url 'https://jitpack.io' }
+        mavenCentral()
+    }
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '3.5'
 }
 
 task runApp(type: JavaExec) {
@@ -22,18 +40,8 @@ task runReader(type: JavaExec) {
 task runGenerator(type: JavaExec) {
     main = 'com.slq.qrcode.generator.QRCodeGenerator'
     classpath = sourceSets.main.runtimeClasspath
-//    args(inputFile)
-}
-
-allprojects {
-    sourceCompatibility = 1.8
-    targetCompatibility = 1.8
-
-    idea {
-        module {
-            downloadJavadoc = true
-            downloadSources = true
-        }
+    if (project.hasProperty('inputFile')) {
+        args(inputFile)
     }
 }
 
