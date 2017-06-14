@@ -1,23 +1,21 @@
 package com.slq.qrcode.reader;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
+import java.awt.AWTException;
+import java.awt.Color;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.Robot;
+import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
+// CHECKSTYLE:BooleanExpressionComplexity:OFF
 public final class WhiteboxLocation {
 
     private static final int WIDTH = 399;
     private static final int HEIGHT = 399;
-
-    public WhiteboxLocation() {
-
-    }
-
-    public static void main(String[] args) throws IOException, AWTException, InterruptedException {
-        new WhiteboxLocation().locateWhitebox();
-    }
 
     public Point locateWhitebox() throws AWTException, IOException {
         Robot robot = new Robot();
@@ -25,10 +23,7 @@ public final class WhiteboxLocation {
         ImageIO.write(screenshot, "PNG", new File("what-decoder-can-see.PNG"));
 
         Point point = locateWhitebox(screenshot);
-        if (point != null) {
-//            String msg = String.format("x=%.0f, y=%.0f", point.getX(), point.getY());
-//            System.out.println(msg);
-        } else {
+        if (point == null) {
             System.out.println("Not found!");
         }
 
@@ -61,10 +56,13 @@ public final class WhiteboxLocation {
     private static boolean isColor(BufferedImage screenshot, int x, int y, Color color) {
         try {
             return screenshot.getRGB(x, y) == color.getRGB();
-//            return isAllWhite(screenshot.getRGB(x, y, 10, 10, null, 0, 0));
         } catch (ArrayIndexOutOfBoundsException ex) {
-//            System.out.println("Out of bounds! " + x+ " " + y);
             return false;
         }
     }
+
+    public static void main(String[] args) throws IOException, AWTException, InterruptedException {
+        new WhiteboxLocation().locateWhitebox();
+    }
 }
+// CHECKSTYLE:BooleanExpressionComplexity:ON

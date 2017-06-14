@@ -10,7 +10,11 @@ import com.google.zxing.Result;
 import com.google.zxing.common.HybridBinarizer;
 import com.slq.qrcode.utils.zxing.BufferedImageLuminanceSource;
 
-import java.awt.*;
+import java.awt.AWTException;
+import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.Robot;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -27,6 +31,11 @@ import java.util.concurrent.TimeUnit;
 public final class QRCodeReader {
 
     public static final int SLEEP_TIME = 1;
+    public static final int QRCODE_WIDTH = 400;
+    public static final int QRCODE_HEIGHT = 400;
+    public static final int CONSOLE_WIDTH = 100;
+    public static final int LIMIT = 40;
+    public static final int CONSOLE_WIDTH_LIMIT = 150;
 
     public static void main(String[] args) throws IOException, AWTException, InterruptedException {
         Item item = new Item();
@@ -48,7 +57,7 @@ public final class QRCodeReader {
             return false;
         }
 
-        Dimension dimension = new Dimension(400, 400);
+        Dimension dimension = new Dimension(QRCODE_WIDTH, QRCODE_HEIGHT);
         Rectangle rectangle = new Rectangle(startingPoint, dimension);
         BufferedImage image = new Robot().createScreenCapture(rectangle);
 
@@ -56,8 +65,8 @@ public final class QRCodeReader {
 
         String pointMsg = String.format("x=%.0f, y=%.0f", startingPoint.getX(), startingPoint.getY());
 
-        if (text.length() > 150) {
-            System.out.printf("%s|%s ... %s%n", pointMsg, text.substring(0, 100), text.substring(text.length() - 40));
+        if (text.length() > CONSOLE_WIDTH_LIMIT) {
+            System.out.printf("%s|%s ... %s%n", pointMsg, text.substring(0, CONSOLE_WIDTH), text.substring(text.length() - LIMIT));
         } else {
             System.out.printf("%s| short! %s%n", pointMsg, text);
         }
@@ -81,7 +90,7 @@ public final class QRCodeReader {
             hints.put(DecodeHintType.CHARACTER_SET, "UTF-8");
             hints.put(DecodeHintType.PURE_BARCODE, Boolean.FALSE);
             result = reader.decode(bitmap, hints);
-        } catch (ReaderException re) {
+        } catch (ReaderException ex) {
             return "";
         }
         return String.valueOf(result.getText());
@@ -93,7 +102,6 @@ public final class QRCodeReader {
         Map<Integer, String> map = new TreeMap<>();
         private String outputFilename = "";
 
-
         void updateOutputFilenameIfNeeded(String outputFilename) {
             if (outputFilename.length() > this.outputFilename.length()) {
                 this.outputFilename = outputFilename;
@@ -102,7 +110,7 @@ public final class QRCodeReader {
 
         void updateMapIfNeeded(Integer key, String value) {
             if (!map.containsKey(key)) {
-                if(key - previousKey(map) != 1) {
+                if (key - previousKey(map) != 1) {
                     throw new IllegalStateException("Missing part before #" + key);
                 }
 

@@ -1,9 +1,12 @@
 package com.slq.qrcode.generator;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-import java.awt.*;
+import java.awt.HeadlessException;
 import java.io.IOException;
 import java.io.PipedInputStream;
 

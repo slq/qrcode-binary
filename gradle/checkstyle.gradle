@@ -1,0 +1,21 @@
+apply plugin: 'checkstyle'
+
+def checkstyleCacheFilePropName = 'checkstyle.cache.file'
+if (!System.properties[checkstyleCacheFilePropName]) {
+    System.properties[checkstyleCacheFilePropName] = '' // no cache file
+}
+checkstyle {
+    configFile = "${rootProject.projectDir}/config/checkstyle/checkstyle.xml" as File
+
+    project.ext.checkstyleVersion = '7.4'
+    project.ext.sevntuChecksVersion = '1.23.0'
+
+    repositories {
+        mavenCentral()
+        maven { url "http://sevntu-checkstyle.github.com/sevntu.checkstyle/maven2" }
+    }
+}
+dependencies {
+    checkstyle 'com.puppycrawl.tools:checkstyle:7.4'
+    checkstyle 'com.github.sevntu.checkstyle:sevntu-checks:1.23.0'
+}

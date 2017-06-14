@@ -16,6 +16,10 @@ import java.util.Base64;
 import java.util.concurrent.TimeUnit;
 
 public class QRCodeGenerator {
+    public static final int QRCODE_WIDTH = 400;
+    public static final int QRCODE_HEIGHT = 400;
+    public static final int CONSOLE_WIDTH = 100;
+    public static final int LENGTH_LIMIT = 40;
 
     // batch processing
 
@@ -55,13 +59,13 @@ public class QRCodeGenerator {
 
         while (start < end && end <= length) {
             String messageToEncode = String.format("%d|%d|%s|%s", i, max, outputFilename, content.substring(start, end));
-            log.info("{}/{} - {}...{}", i, max, messageToEncode.substring(0, 100), messageToEncode.substring(messageToEncode.length()-40));
+            log.info("{}/{} - {}...{}", i, max, messageToEncode.substring(0, CONSOLE_WIDTH), messageToEncode.substring(messageToEncode.length() - LENGTH_LIMIT));
 
             PipedInputStream imageInputStream = new PipedInputStream();
             PipedOutputStream imageOutputStream = new PipedOutputStream(imageInputStream);
             new Thread(() -> QRCode.from(messageToEncode)
                     .to(ImageType.PNG)
-                    .withSize(400, 400)
+                    .withSize(QRCODE_WIDTH, QRCODE_HEIGHT)
                     .withCharset("UTF-8")
                     .withErrorCorrection(ErrorCorrectionLevel.L)
                     .writeTo(imageOutputStream)
