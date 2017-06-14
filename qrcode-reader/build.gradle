@@ -1,3 +1,9 @@
+jar {
+    manifest {
+        attributes "Main-Class": "com.slq.qrcode.reader.QRCodeReader"
+    }
+}
+
 dependencies {
     compile 'com.google.zxing:core:3.3.0'
 }

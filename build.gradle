@@ -4,16 +4,25 @@ version '1.0-SNAPSHOT'
 allprojects {
     group 'com.slq.qrcode'
 
-    apply plugin: 'java'
     apply plugin: 'idea'
-
-    sourceCompatibility = 1.8
-    targetCompatibility = 1.8
 
     idea {
         module {
             downloadJavadoc = true
             downloadSources = true
+        }
+    }
+}
+
+subprojects {
+    apply plugin: 'java'
+
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
+    jar {
+        from {
+            configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
         }
     }
 
@@ -25,27 +34,4 @@ allprojects {
 
 task wrapper(type: Wrapper) {
     gradleVersion = '3.5'
-}
-
-task runApp(type: JavaExec) {
-    main = 'com.slq.qrcode.reader.WhiteboxLocation'
-    classpath = sourceSets.main.runtimeClasspath
-}
-
-task runReader(type: JavaExec) {
-    main = 'com.slq.qrcode.reader.QRCodeReader'
-    classpath = sourceSets.main.runtimeClasspath
-}
-
-task runGenerator(type: JavaExec) {
-    main = 'com.slq.qrcode.generator.QRCodeGenerator'
-    classpath = sourceSets.main.runtimeClasspath
-    if (project.hasProperty('inputFile')) {
-        args(inputFile)
-    }
-}
-
-dependencies {
-    compile project(':qrcode-reader')
-    compile project(':qrcode-generator')
 }
