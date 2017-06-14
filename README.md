@@ -1,4 +1,4 @@
-# QRCode-binary
+# QRCode-binary [![Build Status](https://travis-ci.org/slq/qrcode-binary.svg?branch=master)](https://travis-ci.org/slq/qrcode-binary)
 Set of tools to generate and read QRCodes with any kind of content.
 
 By convention, QR codes are usually used to transfer textual data. 
