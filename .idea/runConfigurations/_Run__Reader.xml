@@ -1,0 +1,8 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="[Run] Reader" type="JarApplication">
+    <option name="JAR_PATH" value="$PROJECT_DIR$/qrcode-reader/build/libs/qrcode-reader.jar" />
+    <option name="WORKING_DIRECTORY" value="C:\Dev\Java\qrcode-binary" />
+    <option name="ALTERNATIVE_JRE_PATH" />
+    <method v="2" />
+  </configuration>
+</component>

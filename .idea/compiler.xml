@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <bytecodeTargetLevel>
+      <module name="qrcode-binary.qrcode-generator.main" target="1.8" />
+      <module name="qrcode-binary.qrcode-generator.test" target="1.8" />
+      <module name="qrcode-binary.qrcode-reader.main" target="1.8" />
+      <module name="qrcode-binary.qrcode-reader.test" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

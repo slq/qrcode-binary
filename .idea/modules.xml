@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/qrcode-binary.iml" filepath="$PROJECT_DIR$/qrcode-binary.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/qrcode-generator/qrcode-binary.qrcode-generator.iml" filepath="$PROJECT_DIR$/.idea/modules/qrcode-generator/qrcode-binary.qrcode-generator.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/qrcode-generator/qrcode-binary.qrcode-generator.main.iml" filepath="$PROJECT_DIR$/.idea/modules/qrcode-generator/qrcode-binary.qrcode-generator.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/qrcode-generator/qrcode-binary.qrcode-generator.test.iml" filepath="$PROJECT_DIR$/.idea/modules/qrcode-generator/qrcode-binary.qrcode-generator.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/qrcode-reader/qrcode-binary.qrcode-reader.iml" filepath="$PROJECT_DIR$/.idea/modules/qrcode-reader/qrcode-binary.qrcode-reader.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/qrcode-reader/qrcode-binary.qrcode-reader.main.iml" filepath="$PROJECT_DIR$/.idea/modules/qrcode-reader/qrcode-binary.qrcode-reader.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/qrcode-reader/qrcode-binary.qrcode-reader.test.iml" filepath="$PROJECT_DIR$/.idea/modules/qrcode-reader/qrcode-binary.qrcode-reader.test.iml" />
+    </modules>
+  </component>
+</project>
